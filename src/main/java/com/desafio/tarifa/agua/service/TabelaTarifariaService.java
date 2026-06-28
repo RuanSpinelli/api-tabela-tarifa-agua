@@ -97,7 +97,7 @@ public class TabelaTarifariaService {
                 if (proxima.getLimiteInferior() != atual.getLimiteSuperior() + 1) {
                     throw new RegraNegocioException(
                             "Categoria " + categoriaId + ": buraco entre faixas. " +
-                                    "Esperado inicio em " + atual.getLimiteSuperior() +
+                                    "Esperado inicio em " + (atual.getLimiteSuperior() + 1) +
                                     ", mas recebeu " + proxima.getLimiteInferior());
                 }
             }
