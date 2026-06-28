@@ -1,0 +1,1 @@
+INSERT INTO categoria (nome) VALUES ('COMERCIAL'), ('INDUSTRIAL'), ('PARTICULAR'), ('PUBLICO');
