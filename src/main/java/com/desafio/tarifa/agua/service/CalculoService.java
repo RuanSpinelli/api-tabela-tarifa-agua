@@ -50,7 +50,7 @@ public class CalculoService {
 
         // Busca as faixas ordenadas por limite inferior (crescente)
         List<Faixa> faixas = faixaRepository
-                .findByTabelaTarifariaIdAndCategoriaIdOrderByLimiteInferiorAsc(
+                .findByTabelaTarifariaCategoria_TabelaTarifaria_IdAndTabelaTarifariaCategoria_Categoria_IdOrderByLimiteInferiorAsc(
                         request.getTabelaId(), categoria.getId());
 
         if (faixas.isEmpty()) {

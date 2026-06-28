@@ -1,5 +1,6 @@
 package com.desafio.tarifa.agua.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,8 @@ public class Categoria {
     private String nome;
 
     @OneToMany(mappedBy = "categoria")
-    private List<Faixa> faixas = new ArrayList<>();
+    @JsonIgnore
+    private List<TabelaTarifariaCategoria> tabelaCategorias = new ArrayList<>();
 
     public Categoria() {}
 
@@ -27,6 +29,6 @@ public class Categoria {
     public void setId(Long id) { this.id = id; }
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
-    public List<Faixa> getFaixas() { return faixas; }
-    public void setFaixas(List<Faixa> faixas) { this.faixas = faixas; }
+    public List<TabelaTarifariaCategoria> getTabelaCategorias() { return tabelaCategorias; }
+    public void setTabelaCategorias(List<TabelaTarifariaCategoria> tabelaCategorias) { this.tabelaCategorias = tabelaCategorias; }
 }

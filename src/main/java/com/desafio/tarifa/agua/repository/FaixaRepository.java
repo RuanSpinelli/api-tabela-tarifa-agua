@@ -7,5 +7,7 @@ import java.util.List;
 
 @Repository
 public interface FaixaRepository extends JpaRepository<Faixa, Long> {
-    List<Faixa> findByTabelaTarifariaIdAndCategoriaIdOrderByLimiteInferiorAsc(Long tabelaId, Long categoriaId);
+
+    List<Faixa> findByTabelaTarifariaCategoria_TabelaTarifaria_IdAndTabelaTarifariaCategoria_Categoria_IdOrderByLimiteInferiorAsc(
+            Long tabelaId, Long categoriaId);
 }

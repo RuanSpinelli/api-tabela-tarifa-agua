@@ -1,9 +1,6 @@
 package com.desafio.tarifa.agua.service;
 
-import com.desafio.tarifa.agua.dto.CalculoRequest;
-import com.desafio.tarifa.agua.dto.CalculoResponse;
-import com.desafio.tarifa.agua.dto.FaixaRequest;
-import com.desafio.tarifa.agua.dto.TabelaTarifariaRequest;
+import com.desafio.tarifa.agua.dto.*;
 import com.desafio.tarifa.agua.exception.RegraNegocioException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +29,13 @@ class CalculoServiceTest {
     void setUp() {
         TabelaTarifariaRequest request = new TabelaTarifariaRequest();
         request.setNome("Tabela Teste");
-        request.setFaixas(List.of(
-                criarFaixa("INDUSTRIAL", 0, 10, new BigDecimal("1.00")),
-                criarFaixa("INDUSTRIAL", 11, 20, new BigDecimal("2.00")),
-                criarFaixa("INDUSTRIAL", 21, 30, new BigDecimal("3.00")),
-                criarFaixa("INDUSTRIAL", 31, 99999, new BigDecimal("4.00"))
+        request.setCategorias(List.of(
+                criarCategoria("INDUSTRIAL", List.of(
+                        criarFaixa(0, 10, new BigDecimal("1.00")),
+                        criarFaixa(11, 20, new BigDecimal("2.00")),
+                        criarFaixa(21, 30, new BigDecimal("3.00")),
+                        criarFaixa(31, 99999, new BigDecimal("4.00"))
+                ))
         ));
         tabelaId = tabelaService.criar(request).getId();
     }
@@ -104,9 +103,15 @@ class CalculoServiceTest {
         assertThrows(RegraNegocioException.class, () -> calculoService.calcular(request));
     }
 
-    private FaixaRequest criarFaixa(String categoriaNome, int inicio, int fim, BigDecimal valor) {
+    private CategoriaRequest criarCategoria(String nome, List<FaixaRequest> faixas) {
+        CategoriaRequest cat = new CategoriaRequest();
+        cat.setCategoriaNome(nome);
+        cat.setFaixas(faixas);
+        return cat;
+    }
+
+    private FaixaRequest criarFaixa(int inicio, int fim, BigDecimal valor) {
         FaixaRequest faixa = new FaixaRequest();
-        faixa.setCategoriaNome(categoriaNome);
         faixa.setLimiteInferior(inicio);
         faixa.setLimiteSuperior(fim);
         faixa.setValorUnitario(valor);

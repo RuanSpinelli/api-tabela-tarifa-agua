@@ -1,13 +1,13 @@
 package com.desafio.tarifa.agua.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"tabela_tarifaria_id", "categoria_id", "limiteInferior"})
+        @UniqueConstraint(columnNames = {"tabela_tarifaria_categoria_id", "limiteInferior"})
 })
 public class Faixa {
 
@@ -16,14 +16,9 @@ public class Faixa {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "tabela_tarifaria_id")
-    @JsonBackReference
-    private TabelaTarifaria tabelaTarifaria;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "categoria_id")
-    @JsonIgnoreProperties({"faixas"})
-    private Categoria categoria;
+    @JoinColumn(name = "tabela_tarifaria_categoria_id")
+    @JsonIgnore
+    private TabelaTarifariaCategoria tabelaTarifariaCategoria;
 
     @Column(nullable = false)
     private Integer limiteInferior;
@@ -38,10 +33,8 @@ public class Faixa {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public TabelaTarifaria getTabelaTarifaria() { return tabelaTarifaria; }
-    public void setTabelaTarifaria(TabelaTarifaria tabelaTarifaria) { this.tabelaTarifaria = tabelaTarifaria; }
-    public Categoria getCategoria() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+    public TabelaTarifariaCategoria getTabelaTarifariaCategoria() { return tabelaTarifariaCategoria; }
+    public void setTabelaTarifariaCategoria(TabelaTarifariaCategoria tabelaTarifariaCategoria) { this.tabelaTarifariaCategoria = tabelaTarifariaCategoria; }
     public Integer getLimiteInferior() { return limiteInferior; }
     public void setLimiteInferior(Integer limiteInferior) { this.limiteInferior = limiteInferior; }
     public Integer getLimiteSuperior() { return limiteSuperior; }

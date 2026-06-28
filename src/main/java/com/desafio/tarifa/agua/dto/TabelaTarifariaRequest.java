@@ -14,17 +14,16 @@ public class TabelaTarifariaRequest {
     private LocalDate vigenciaInicio;
     private LocalDate vigenciaFim;
 
-    @NotEmpty(message = "Deve conter pelo menos uma faixa")
+    @NotEmpty(message = "Deve conter pelo menos uma categoria")
     @Valid
-    private List<FaixaRequest> faixas;
+    private List<CategoriaRequest> categorias;
 
-    // Getters e Setters
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
     public LocalDate getVigenciaInicio() { return vigenciaInicio; }
     public void setVigenciaInicio(LocalDate vigenciaInicio) { this.vigenciaInicio = vigenciaInicio; }
     public LocalDate getVigenciaFim() { return vigenciaFim; }
     public void setVigenciaFim(LocalDate vigenciaFim) { this.vigenciaFim = vigenciaFim; }
-    public List<FaixaRequest> getFaixas() { return faixas; }
-    public void setFaixas(List<FaixaRequest> faixas) { this.faixas = faixas; }
+    public List<CategoriaRequest> getCategorias() { return categorias; }
+    public void setCategorias(List<CategoriaRequest> categorias) { this.categorias = categorias; }
 }

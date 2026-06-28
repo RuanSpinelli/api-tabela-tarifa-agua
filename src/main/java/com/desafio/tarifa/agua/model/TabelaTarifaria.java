@@ -21,10 +21,11 @@ public class TabelaTarifaria {
 
     @OneToMany(mappedBy = "tabelaTarifaria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Faixa> faixas = new ArrayList<>();
+    private List<TabelaTarifariaCategoria> categorias = new ArrayList<>();
 
     public TabelaTarifaria() {}
 
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getNome() { return nome; }
@@ -33,6 +34,6 @@ public class TabelaTarifaria {
     public void setVigenciaInicio(LocalDate vigenciaInicio) { this.vigenciaInicio = vigenciaInicio; }
     public LocalDate getVigenciaFim() { return vigenciaFim; }
     public void setVigenciaFim(LocalDate vigenciaFim) { this.vigenciaFim = vigenciaFim; }
-    public List<Faixa> getFaixas() { return faixas; }
-    public void setFaixas(List<Faixa> faixas) { this.faixas = faixas; }
+    public List<TabelaTarifariaCategoria> getCategorias() { return categorias; }
+    public void setCategorias(List<TabelaTarifariaCategoria> categorias) { this.categorias = categorias; }
 }
