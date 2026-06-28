@@ -34,4 +34,11 @@ public class TabelaTarifariaController {
         service.excluir(id);
         return ResponseEntity.ok(Map.of("mensagem", "Tabela tarifaria excluida com sucesso"));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TabelaTarifaria> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid TabelaTarifariaRequest request) {
+        return ResponseEntity.ok(service.atualizar(id, request));
+    }
 }
