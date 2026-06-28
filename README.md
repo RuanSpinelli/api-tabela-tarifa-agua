@@ -36,8 +36,8 @@ CREATE DATABASE tarifa_agua_db;
 
 Edite src/main/resources/application.properties:
 ```bash
-spring.datasource.username=[usuario do banco]
-spring.datasource.password=[senha do usuario do banco]
+spring.datasource.username=[usuario_do_banco]
+spring.datasource.password=[senha_do_usuario_do_banco]
 ```
 
 4. Execute a aplicação
