@@ -33,10 +33,10 @@ class CalculoServiceTest {
         TabelaTarifariaRequest request = new TabelaTarifariaRequest();
         request.setNome("Tabela Teste");
         request.setFaixas(List.of(
-                criarFaixa(2L, 0, 10, new BigDecimal("1.00")),
-                criarFaixa(2L, 11, 20, new BigDecimal("2.00")),
-                criarFaixa(2L, 21, 30, new BigDecimal("3.00")),
-                criarFaixa(2L, 31, 99999, new BigDecimal("4.00"))
+                criarFaixa("INDUSTRIAL", 0, 10, new BigDecimal("1.00")),
+                criarFaixa("INDUSTRIAL", 11, 20, new BigDecimal("2.00")),
+                criarFaixa("INDUSTRIAL", 21, 30, new BigDecimal("3.00")),
+                criarFaixa("INDUSTRIAL", 31, 99999, new BigDecimal("4.00"))
         ));
         tabelaId = tabelaService.criar(request).getId();
     }
@@ -104,9 +104,9 @@ class CalculoServiceTest {
         assertThrows(RegraNegocioException.class, () -> calculoService.calcular(request));
     }
 
-    private FaixaRequest criarFaixa(Long categoriaId, int inicio, int fim, BigDecimal valor) {
+    private FaixaRequest criarFaixa(String categoriaNome, int inicio, int fim, BigDecimal valor) {
         FaixaRequest faixa = new FaixaRequest();
-        faixa.setCategoriaId(categoriaId);
+        faixa.setCategoriaNome(categoriaNome);
         faixa.setLimiteInferior(inicio);
         faixa.setLimiteSuperior(fim);
         faixa.setValorUnitario(valor);
