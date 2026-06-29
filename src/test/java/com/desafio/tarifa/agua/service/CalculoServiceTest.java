@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class CalculoServiceTest {
 
@@ -30,24 +32,19 @@ class CalculoServiceTest {
         TabelaTarifariaRequest request = new TabelaTarifariaRequest();
         request.setNome("Tabela Teste");
         request.setCategorias(List.of(
-                criarCategoria("INDUSTRIAL", List.of(
+                criarCategoria("INDUSTRIAL",
                         criarFaixa(0, 10, new BigDecimal("1.00")),
                         criarFaixa(11, 20, new BigDecimal("2.00")),
                         criarFaixa(21, 30, new BigDecimal("3.00")),
                         criarFaixa(31, 99999, new BigDecimal("4.00"))
-                ))
+                )
         ));
         tabelaId = tabelaService.criar(request).getId();
     }
 
     @Test
     void deveCalcularExemploDoEnunciado() {
-        CalculoRequest request = new CalculoRequest();
-        request.setTabelaId(tabelaId);
-        request.setCategoria("INDUSTRIAL");
-        request.setConsumo(18);
-
-        CalculoResponse response = calculoService.calcular(request);
+        CalculoResponse response = calcular("INDUSTRIAL", 18);
 
         assertEquals("INDUSTRIAL", response.getCategoria());
         assertEquals(18, response.getConsumoTotal());
@@ -61,16 +58,38 @@ class CalculoServiceTest {
 
     @Test
     void deveCalcularConsumoZero() {
-        CalculoRequest request = new CalculoRequest();
-        request.setTabelaId(tabelaId);
-        request.setCategoria("INDUSTRIAL");
-        request.setConsumo(0);
-
-        CalculoResponse response = calculoService.calcular(request);
-
-        assertEquals(0, response.getConsumoTotal());
+        CalculoResponse response = calcular("INDUSTRIAL", 0);
         assertEquals(BigDecimal.ZERO, response.getValorTotal());
         assertTrue(response.getDetalhamento().isEmpty());
+    }
+
+    @Test
+    void deveCalcularConsumoAteUltimaFaixa() {
+        CalculoResponse response = calcular("INDUSTRIAL", 50);
+        assertEquals(new BigDecimal("140.00"), response.getValorTotal());
+    }
+
+    @Test
+    void deveCalcularComValoresDecimais() {
+        TabelaTarifariaRequest request = new TabelaTarifariaRequest();
+        request.setNome("Tabela Decimal");
+        request.setCategorias(List.of(
+                criarCategoria("COMERCIAL",
+                        criarFaixa(0, 10, new BigDecimal("1.75")),
+                        criarFaixa(11, 20, new BigDecimal("3.50")),
+                        criarFaixa(21, 30, new BigDecimal("5.25")),
+                        criarFaixa(31, 99999, new BigDecimal("7.80"))
+                )
+        ));
+        Long idDecimal = tabelaService.criar(request).getId();
+
+        CalculoRequest calcRequest = new CalculoRequest();
+        calcRequest.setTabelaId(idDecimal);
+        calcRequest.setCategoria("COMERCIAL");
+        calcRequest.setConsumo(25);
+
+        CalculoResponse response = calculoService.calcular(calcRequest);
+        assertEquals(new BigDecimal("78.75"), response.getValorTotal());
     }
 
     @Test
@@ -79,7 +98,6 @@ class CalculoServiceTest {
         request.setTabelaId(tabelaId);
         request.setCategoria("INDUSTRIAL");
         request.setConsumo(100000);
-
         assertThrows(RegraNegocioException.class, () -> calculoService.calcular(request));
     }
 
@@ -89,7 +107,6 @@ class CalculoServiceTest {
         request.setTabelaId(tabelaId);
         request.setCategoria("INEXISTENTE");
         request.setConsumo(10);
-
         assertThrows(RegraNegocioException.class, () -> calculoService.calcular(request));
     }
 
@@ -99,14 +116,21 @@ class CalculoServiceTest {
         request.setTabelaId(999L);
         request.setCategoria("INDUSTRIAL");
         request.setConsumo(10);
-
         assertThrows(RegraNegocioException.class, () -> calculoService.calcular(request));
     }
 
-    private CategoriaRequest criarCategoria(String nome, List<FaixaRequest> faixas) {
+    private CalculoResponse calcular(String categoria, int consumo) {
+        CalculoRequest request = new CalculoRequest();
+        request.setTabelaId(tabelaId);
+        request.setCategoria(categoria);
+        request.setConsumo(consumo);
+        return calculoService.calcular(request);
+    }
+
+    private CategoriaRequest criarCategoria(String nome, FaixaRequest... faixas) {
         CategoriaRequest cat = new CategoriaRequest();
         cat.setCategoriaNome(nome);
-        cat.setFaixas(faixas);
+        cat.setFaixas(List.of(faixas));
         return cat;
     }
 
