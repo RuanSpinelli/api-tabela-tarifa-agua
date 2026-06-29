@@ -13,6 +13,7 @@ public class Faixa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @ManyToOne(optional = false)

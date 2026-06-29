@@ -43,7 +43,14 @@ public class TabelaTarifariaService {
 
             // Busca a categoria pelo nome
             Categoria categoria = categoriaRepository.findByNome(categoriaNome)
-                    .orElseThrow(() -> new RegraNegocioException("Categoria " + categoriaNome + " nao encontrada"));
+                    .orElseThrow(() -> {
+                        List<String> disponiveis = categoriaRepository.findAll()
+                                .stream()
+                                .map(Categoria::getNome)
+                                .toList();
+                        throw new RegraNegocioException(
+                                "Categoria '" + categoriaNome + "' nao encontrada. Disponiveis: " + disponiveis);
+                    });
 
             // Cria o vínculo TabelaTarifariaCategoria
             TabelaTarifariaCategoria tabCat = new TabelaTarifariaCategoria();
@@ -103,7 +110,14 @@ public class TabelaTarifariaService {
             String categoriaNome = catRequest.getCategoriaNome().toUpperCase();
 
             Categoria categoria = categoriaRepository.findByNome(categoriaNome)
-                    .orElseThrow(() -> new RegraNegocioException("Categoria " + categoriaNome + " nao encontrada"));
+                    .orElseThrow(() -> {
+                        List<String> disponiveis = categoriaRepository.findAll()
+                                .stream()
+                                .map(Categoria::getNome)
+                                .toList();
+                        throw new RegraNegocioException(
+                                "Categoria '" + categoriaNome + "' nao encontrada. Disponiveis: " + disponiveis);
+                    });
 
             TabelaTarifariaCategoria tabCat = new TabelaTarifariaCategoria();
             tabCat.setTabelaTarifaria(tabela);
@@ -144,21 +158,34 @@ public class TabelaTarifariaService {
     private void validarEscada(List<FaixaRequest> faixas, String categoriaNome) {
         if (faixas.isEmpty()) return;
 
+        // 1. Cobertura completa - deve iniciar em 0
         if (faixas.get(0).getLimiteInferior() != 0) {
-            throw new RegraNegocioException("Categoria " + categoriaNome + ": primeira faixa deve comecar em 0");
+            throw new RegraNegocioException(
+                    "Categoria " + categoriaNome + ": primeira faixa deve comecar em 0");
         }
 
         for (int i = 0; i < faixas.size(); i++) {
             FaixaRequest atual = faixas.get(i);
 
+            // 2. Ordem válida - inferior < superior
             if (atual.getLimiteInferior() >= atual.getLimiteSuperior()) {
                 throw new RegraNegocioException(
                         "Categoria " + categoriaNome + ": limite inferior (" + atual.getLimiteInferior() +
                                 ") deve ser menor que o superior (" + atual.getLimiteSuperior() + ")");
             }
 
+            // 3. Não sobreposição - sem buracos entre faixas
             if (i < faixas.size() - 1) {
                 FaixaRequest proxima = faixas.get(i + 1);
+
+                // 2. Ordem válida na próxima faixa também
+                if (proxima.getLimiteInferior() >= proxima.getLimiteSuperior()) {
+                    throw new RegraNegocioException(
+                            "Categoria " + categoriaNome + ": limite inferior (" + proxima.getLimiteInferior() +
+                                    ") deve ser menor que o superior (" + proxima.getLimiteSuperior() + ")");
+                }
+
+                // 3. Não sobreposição
                 if (proxima.getLimiteInferior() != atual.getLimiteSuperior() + 1) {
                     throw new RegraNegocioException(
                             "Categoria " + categoriaNome + ": buraco entre faixas. " +
@@ -168,6 +195,7 @@ public class TabelaTarifariaService {
             }
         }
 
+        // 4. Cobertura suficiente
         FaixaRequest ultima = faixas.get(faixas.size() - 1);
         if (ultima.getLimiteSuperior() < 99999) {
             throw new RegraNegocioException(
