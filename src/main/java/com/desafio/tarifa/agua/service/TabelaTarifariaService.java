@@ -44,6 +44,7 @@ public class TabelaTarifariaService {
         tabela.setVigenciaFim(request.getVigenciaFim());
 
         tabela.getCategorias().clear();
+        // Normaliza o registro
         tabelaRepository.flush();
 
         // Passa a referência da tabela
