@@ -32,7 +32,7 @@ Crie o banco no PostgreSQL:
 CREATE DATABASE tarifa_agua_db;
 ```
 
-3. Configure as credenciais
+### 3. Configure as credenciais
 
 Edite src/main/resources/application.properties:
 ```bash
@@ -40,7 +40,7 @@ spring.datasource.username=[usuario_do_banco]
 spring.datasource.password=[senha_do_usuario_do_banco]
 ```
 
-4. Execute a aplicação
+### 4. Execute a aplicação
 ```bash
 ./mvnw spring-boot:run
 ```
